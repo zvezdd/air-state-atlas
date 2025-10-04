@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { StatePopup } from "./StatePopup";
+import usMapBackground from "@/assets/usmap.jpg";
 
 interface StateData {
   name: string;
@@ -134,7 +135,7 @@ export const USMap = () => {
         {/* Background image for visual reference */}
         <div className="absolute inset-0 opacity-30 rounded-2xl overflow-hidden pointer-events-none">
           <img 
-            src="/src/assets/usmap.jpg" 
+            src={usMapBackground} 
             alt="US Map Background" 
             className="w-full h-full object-contain"
           />
