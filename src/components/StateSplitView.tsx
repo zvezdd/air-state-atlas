@@ -59,15 +59,15 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
   const aqiColor = getAQIColor(aqiValue);
   const aqiCategory = getAQICategory(aqiValue);
 
-  // Placeholder images - in production, these would be fetched from an API or database
+  // Using picsum.photos for reliable placeholder images
   const stateImages = [
-    `https://source.unsplash.com/800x600/?${stateName},landmark`,
-    `https://source.unsplash.com/800x600/?${stateName},nature`,
-    `https://source.unsplash.com/800x600/?${stateName},city`,
+    `https://picsum.photos/seed/${stateCode}1/800/600`,
+    `https://picsum.photos/seed/${stateCode}2/800/600`,
+    `https://picsum.photos/seed/${stateCode}3/800/600`,
   ];
 
   return (
-    <div className="fixed inset-0 bg-background z-50 flex">
+    <div className="w-1/2 p-8 overflow-y-auto bg-background relative">
       {/* Close button */}
       <button
         onClick={onClose}
@@ -77,8 +77,8 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
         <X className="w-6 h-6" />
       </button>
 
-      {/* Right side - Images and AQI */}
-      <div className="w-1/2 p-8 overflow-y-auto">
+      {/* Images and AQI Content */}
+      <div className="w-full">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-4xl font-bold mb-2 bg-gradient-accent bg-clip-text text-transparent">
             {stateName}

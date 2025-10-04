@@ -210,20 +210,20 @@ export const USMap = () => {
 
       {/* Split View */}
       {selectedState && (
-        <div className="fixed inset-0 z-50 flex">
+        <div className="fixed inset-0 z-50 flex bg-background">
           {/* Left side - Map with selected state emphasis */}
-          <div className="w-1/2 bg-background/95 backdrop-blur-sm flex items-center justify-center p-8">
-            <div className="relative max-w-3xl w-full glass rounded-2xl p-4 shadow-glow-lg">
+          <div className="w-1/2 flex items-center justify-center p-8">
+            <div className="relative max-w-3xl w-full glass rounded-2xl p-6 shadow-glow-lg">
               <div className="relative w-full" style={{ paddingBottom: '62.5%' }}>
                 <img 
                   src={usMapBackground} 
                   alt="US Map" 
-                  className="absolute inset-0 w-full h-full object-contain opacity-40"
+                  className="absolute inset-0 w-full h-full object-contain opacity-70"
                 />
                 
                 {/* All state buttons with selected state highlighted */}
                 {states.map((state) => (
-                  <button
+                  <div
                     key={state.code}
                     style={{
                       position: 'absolute',
@@ -232,19 +232,26 @@ export const USMap = () => {
                       transform: 'translate(-50%, -50%)'
                     }}
                     className={`
-                      glass rounded-lg px-2 py-1 text-xs font-bold
-                      transition-all duration-300
+                      rounded-lg px-3 py-2 text-sm font-bold
+                      transition-all duration-500
                       ${state.code === selectedState.code 
-                        ? 'bg-primary text-primary-foreground scale-150 shadow-glow ring-4 ring-primary z-10' 
-                        : 'opacity-30'
+                        ? 'bg-primary text-primary-foreground scale-[2] shadow-glow ring-4 ring-primary/50 z-10' 
+                        : 'glass opacity-20'
                       }
                       min-w-[2.5rem]
+                      flex items-center justify-center
                     `}
-                    disabled
                   >
                     {state.code}
-                  </button>
+                  </div>
                 ))}
+              </div>
+              
+              {/* State name label */}
+              <div className="mt-6 text-center">
+                <h2 className="text-3xl font-bold bg-gradient-accent bg-clip-text text-transparent">
+                  {selectedState.name}
+                </h2>
               </div>
             </div>
           </div>
