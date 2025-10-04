@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { StatePopup } from "./StatePopup";
+import { StateSplitView } from "./StateSplitView";
 import usMapBackground from "@/assets/usmap.svg";
 
 interface StateData {
@@ -119,100 +119,146 @@ export const USMap = () => {
   };
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center p-8">
-      {/* Title */}
-      <div className="text-center mb-8 animate-fade-in">
-        <h1 className="text-5xl font-bold bg-gradient-accent bg-clip-text text-transparent mb-2">
-          Environmental Air Quality Monitor
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Click any state to view real-time air quality and weather data
-        </p>
-      </div>
-
-      {/* Map Container - Interactive positioned map */}
-      <div className="relative max-w-6xl w-full glass rounded-2xl p-4 shadow-glow-lg">
-        {/* US Map Background */}
-        <div className="relative w-full" style={{ paddingBottom: '62.5%' }}>
-          <img 
-            src={usMapBackground} 
-            alt="US Map" 
-            className="absolute inset-0 w-full h-full object-contain opacity-70"
-          />
-          
-          {/* Positioned state buttons */}
-          {states.map((state) => (
-            <button
-              key={state.code}
-              onClick={() => handleStateClick(state)}
-              onMouseEnter={() => setHoveredState(state.code)}
-              onMouseLeave={() => setHoveredState(null)}
-              style={{
-                position: 'absolute',
-                left: `${state.x}%`,
-                top: `${state.y}%`,
-                transform: 'translate(-50%, -50%)'
-              }}
-              className={`
-                glass rounded-lg px-2 py-1 text-xs font-bold
-                transition-all duration-300 hover-scale
-                ${hoveredState === state.code ? 'shadow-glow ring-2 ring-primary z-10' : ''}
-                hover:bg-primary/30 hover:text-primary
-                focus:outline-none focus:ring-2 focus:ring-primary
-                min-w-[2.5rem]
-              `}
-              aria-label={`View air quality data for ${state.name}`}
-            >
-              {state.code}
-            </button>
-          ))}
-        </div>
-
-        {/* Hover tooltip */}
-        {hoveredState && (
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 glass rounded-lg px-4 py-2 animate-fade-in z-20">
-            <p className="text-sm font-medium">
-              {states.find(s => s.code === hoveredState)?.name}
+    <>
+      {/* Main Map View */}
+      {!selectedState && (
+        <div className="relative w-full h-full flex flex-col items-center justify-center p-8">
+          {/* Title */}
+          <div className="text-center mb-8 animate-fade-in">
+            <h1 className="text-5xl font-bold bg-gradient-accent bg-clip-text text-transparent mb-2">
+              Environmental Air Quality Monitor
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Click any state to view real-time air quality and weather data
             </p>
           </div>
-        )}
-      </div>
 
-      {/* Info cards */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl w-full">
-        <div className="glass rounded-xl p-4 hover-scale">
-          <div className="text-3xl mb-2">💨</div>
-          <h3 className="font-semibold text-primary mb-1">Air Quality Index</h3>
-          <p className="text-sm text-muted-foreground">
-            Real-time PM2.5, Ozone, and NO₂ measurements
-          </p>
-        </div>
-        <div className="glass rounded-xl p-4 hover-scale">
-          <div className="text-3xl mb-2">🌤️</div>
-          <h3 className="font-semibold text-accent mb-1">Weather Data</h3>
-          <p className="text-sm text-muted-foreground">
-            Current temperature, humidity, and wind speed
-          </p>
-        </div>
-        <div className="glass rounded-xl p-4 hover-scale">
-          <div className="text-3xl mb-2">🗺️</div>
-          <h3 className="font-semibold text-primary mb-1">All 50 States</h3>
-          <p className="text-sm text-muted-foreground">
-            Comprehensive coverage across the United States
-          </p>
-        </div>
-      </div>
+          {/* Map Container - Interactive positioned map */}
+          <div className="relative max-w-6xl w-full glass rounded-2xl p-4 shadow-glow-lg">
+            {/* US Map Background */}
+            <div className="relative w-full" style={{ paddingBottom: '62.5%' }}>
+              <img 
+                src={usMapBackground} 
+                alt="US Map" 
+                className="absolute inset-0 w-full h-full object-contain opacity-70"
+              />
+              
+              {/* Positioned state buttons */}
+              {states.map((state) => (
+                <button
+                  key={state.code}
+                  onClick={() => handleStateClick(state)}
+                  onMouseEnter={() => setHoveredState(state.code)}
+                  onMouseLeave={() => setHoveredState(null)}
+                  style={{
+                    position: 'absolute',
+                    left: `${state.x}%`,
+                    top: `${state.y}%`,
+                    transform: 'translate(-50%, -50%)'
+                  }}
+                  className={`
+                    glass rounded-lg px-2 py-1 text-xs font-bold
+                    transition-all duration-300 hover-scale
+                    ${hoveredState === state.code ? 'shadow-glow ring-2 ring-primary z-10' : ''}
+                    hover:bg-primary/30 hover:text-primary
+                    focus:outline-none focus:ring-2 focus:ring-primary
+                    min-w-[2.5rem]
+                  `}
+                  aria-label={`View air quality data for ${state.name}`}
+                >
+                  {state.code}
+                </button>
+              ))}
+            </div>
 
-      {/* Popup */}
-      {selectedState && (
-        <StatePopup
-          stateName={selectedState.name}
-          stateCode={selectedState.code}
-          data={airQualityData}
-          isLoading={isLoading}
-          onClose={closePopup}
-        />
+            {/* Hover tooltip */}
+            {hoveredState && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 glass rounded-lg px-4 py-2 animate-fade-in z-20">
+                <p className="text-sm font-medium">
+                  {states.find(s => s.code === hoveredState)?.name}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Info cards */}
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl w-full">
+            <div className="glass rounded-xl p-4 hover-scale">
+              <div className="text-3xl mb-2">💨</div>
+              <h3 className="font-semibold text-primary mb-1">Air Quality Index</h3>
+              <p className="text-sm text-muted-foreground">
+                Real-time PM2.5, Ozone, and NO₂ measurements
+              </p>
+            </div>
+            <div className="glass rounded-xl p-4 hover-scale">
+              <div className="text-3xl mb-2">🌤️</div>
+              <h3 className="font-semibold text-accent mb-1">Weather Data</h3>
+              <p className="text-sm text-muted-foreground">
+                Current temperature, humidity, and wind speed
+              </p>
+            </div>
+            <div className="glass rounded-xl p-4 hover-scale">
+              <div className="text-3xl mb-2">🗺️</div>
+              <h3 className="font-semibold text-primary mb-1">All 50 States</h3>
+              <p className="text-sm text-muted-foreground">
+                Comprehensive coverage across the United States
+              </p>
+            </div>
+          </div>
+        </div>
       )}
-    </div>
+
+      {/* Split View */}
+      {selectedState && (
+        <div className="fixed inset-0 z-50 flex">
+          {/* Left side - Map with selected state emphasis */}
+          <div className="w-1/2 bg-background/95 backdrop-blur-sm flex items-center justify-center p-8">
+            <div className="relative max-w-3xl w-full glass rounded-2xl p-4 shadow-glow-lg">
+              <div className="relative w-full" style={{ paddingBottom: '62.5%' }}>
+                <img 
+                  src={usMapBackground} 
+                  alt="US Map" 
+                  className="absolute inset-0 w-full h-full object-contain opacity-40"
+                />
+                
+                {/* All state buttons with selected state highlighted */}
+                {states.map((state) => (
+                  <button
+                    key={state.code}
+                    style={{
+                      position: 'absolute',
+                      left: `${state.x}%`,
+                      top: `${state.y}%`,
+                      transform: 'translate(-50%, -50%)'
+                    }}
+                    className={`
+                      glass rounded-lg px-2 py-1 text-xs font-bold
+                      transition-all duration-300
+                      ${state.code === selectedState.code 
+                        ? 'bg-primary text-primary-foreground scale-150 shadow-glow ring-4 ring-primary z-10' 
+                        : 'opacity-30'
+                      }
+                      min-w-[2.5rem]
+                    `}
+                    disabled
+                  >
+                    {state.code}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right side - State details */}
+          <StateSplitView
+            stateName={selectedState.name}
+            stateCode={selectedState.code}
+            data={airQualityData}
+            isLoading={isLoading}
+            onClose={closePopup}
+          />
+        </div>
+      )}
+    </>
   );
 };
