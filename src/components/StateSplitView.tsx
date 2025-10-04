@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AirQualityData {
   available: boolean;
@@ -58,13 +60,44 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
   const aqiValue = getAQIValue(data);
   const aqiColor = getAQIColor(aqiValue);
   const aqiCategory = getAQICategory(aqiValue);
+  const [stateImages, setStateImages] = useState<string[]>([]);
+  const [loadingPhotos, setLoadingPhotos] = useState(true);
 
-  // Using picsum.photos for reliable placeholder images
-  const stateImages = [
-    `https://picsum.photos/seed/${stateCode}1/800/600`,
-    `https://picsum.photos/seed/${stateCode}2/800/600`,
-    `https://picsum.photos/seed/${stateCode}3/800/600`,
-  ];
+  useEffect(() => {
+    const fetchPhotos = async () => {
+      setLoadingPhotos(true);
+      try {
+        const { data: photoData, error } = await supabase.functions.invoke('fetch-state-photos', {
+          body: { stateName }
+        });
+
+        if (error) throw error;
+
+        if (photoData?.photos && photoData.photos.length > 0) {
+          setStateImages(photoData.photos);
+        } else {
+          // Fallback to placeholder images
+          setStateImages([
+            `https://picsum.photos/seed/${stateCode}1/800/600`,
+            `https://picsum.photos/seed/${stateCode}2/800/600`,
+            `https://picsum.photos/seed/${stateCode}3/800/600`,
+          ]);
+        }
+      } catch (error) {
+        console.error('Error fetching state photos:', error);
+        // Fallback to placeholder images
+        setStateImages([
+          `https://picsum.photos/seed/${stateCode}1/800/600`,
+          `https://picsum.photos/seed/${stateCode}2/800/600`,
+          `https://picsum.photos/seed/${stateCode}3/800/600`,
+        ]);
+      } finally {
+        setLoadingPhotos(false);
+      }
+    };
+
+    fetchPhotos();
+  }, [stateName, stateCode]);
 
   return (
     <div className="w-1/2 p-8 overflow-y-auto bg-background relative">
@@ -87,16 +120,25 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
 
           {/* State Images */}
           <div className="grid grid-cols-1 gap-4 mb-8">
-            {stateImages.map((img, idx) => (
-              <div key={idx} className="glass rounded-xl overflow-hidden hover-scale">
-                <img
-                  src={img}
-                  alt={`${stateName} landmark ${idx + 1}`}
-                  className="w-full h-64 object-cover"
-                  loading="lazy"
-                />
-              </div>
-            ))}
+            {loadingPhotos ? (
+              // Loading skeleton
+              Array.from({ length: 3 }).map((_, idx) => (
+                <div key={idx} className="glass rounded-xl overflow-hidden animate-pulse">
+                  <div className="w-full h-64 bg-muted"></div>
+                </div>
+              ))
+            ) : (
+              stateImages.map((img, idx) => (
+                <div key={idx} className="glass rounded-xl overflow-hidden hover-scale">
+                  <img
+                    src={img}
+                    alt={`${stateName} view ${idx + 1}`}
+                    className="w-full h-64 object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ))
+            )}
           </div>
 
           {/* Air Quality Index */}

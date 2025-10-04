@@ -1,1 +1,7 @@
 project_id = "dnaocofeptmegemtydnz"
+
+[functions.fetch-air-quality]
+verify_jwt = false
+
+[functions.fetch-state-photos]
+verify_jwt = false
