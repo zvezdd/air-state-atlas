@@ -2,7 +2,6 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { StatePopup } from "./StatePopup";
-import usMapBackground from "@/assets/usmap.jpg";
 
 interface StateData {
   name: string;
@@ -130,16 +129,10 @@ export const USMap = () => {
         </p>
       </div>
 
-      {/* Map Container - Using custom SVG as visual reference with state buttons overlay */}
+      {/* Map Container - Interactive state grid */}
       <div className="relative max-w-5xl w-full glass rounded-2xl p-8 shadow-glow-lg">
-        {/* Background image for visual reference */}
-        <div className="absolute inset-0 opacity-30 rounded-2xl overflow-hidden pointer-events-none">
-          <img 
-            src={usMapBackground} 
-            alt="US Map Background" 
-            className="w-full h-full object-contain"
-          />
-        </div>
+        {/* Decorative glow effect */}
+        <div className="absolute inset-0 bg-gradient-radial opacity-20 rounded-2xl pointer-events-none"></div>
 
         {/* Interactive state grid */}
         <div className="relative grid grid-cols-5 md:grid-cols-7 lg:grid-cols-10 gap-2 p-4">
