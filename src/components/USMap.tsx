@@ -137,7 +137,7 @@ export const USMap = () => {
           <img 
             src={usMapBackground} 
             alt="US Map" 
-            className="absolute inset-0 w-full h-full object-contain opacity-40"
+            className="absolute inset-0 w-full h-full object-contain opacity-70"
           />
           
           {/* Positioned state buttons */}
