@@ -37,39 +37,43 @@ serve(async (req) => {
       );
     }
 
-    // Search for photos of the state
-    const queries = [
-      `${stateName} landmark`,
-      `${stateName} cityscape`,
-      `${stateName} nature landscape`
-    ];
+    // Search for photos of the state - fetch more to ensure uniqueness
+    const response = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(stateName)}&per_page=15`,
+      {
+        headers: {
+          'Authorization': PEXELS_API_KEY
+        }
+      }
+    );
 
-    const photoPromises = queries.map(async (query) => {
-      const response = await fetch(
-        `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`,
-        {
-          headers: {
-            'Authorization': PEXELS_API_KEY
-          }
+    if (!response.ok) {
+      console.error(`Pexels API error:`, response.status);
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch photos' }),
+        { 
+          status: response.status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       );
+    }
 
-      if (!response.ok) {
-        console.error(`Pexels API error for query "${query}":`, response.status);
-        return null;
+    const data = await response.json();
+    
+    // Get unique photos by ID and take first 3
+    const uniquePhotos = new Map();
+    data.photos?.forEach((photo: any) => {
+      if (!uniquePhotos.has(photo.id)) {
+        uniquePhotos.set(photo.id, photo.src.large);
       }
-
-      const data = await response.json();
-      return data.photos?.[0]?.src?.large || null;
     });
+    
+    const photos = Array.from(uniquePhotos.values()).slice(0, 3);
 
-    const photos = await Promise.all(photoPromises);
-    const validPhotos = photos.filter(photo => photo !== null);
-
-    console.log(`Fetched ${validPhotos.length} photos for ${stateName}`);
+    console.log(`Fetched ${photos.length} unique photos for ${stateName}`);
 
     return new Response(
-      JSON.stringify({ photos: validPhotos }),
+      JSON.stringify({ photos }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
