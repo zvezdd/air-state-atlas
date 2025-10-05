@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import california1 from "@/assets/california-1.jpg";
+import california2 from "@/assets/california-2.jpg";
+import california3 from "@/assets/california-3.jpg";
 
 interface AirQualityData {
   available: boolean;
@@ -66,6 +69,14 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
   useEffect(() => {
     const fetchPhotos = async () => {
       setLoadingPhotos(true);
+      
+      // Check if state is California and use custom images
+      if (stateName === "California") {
+        setStateImages([california1, california2, california3]);
+        setLoadingPhotos(false);
+        return;
+      }
+
       try {
         const { data: photoData, error } = await supabase.functions.invoke('fetch-state-photos', {
           body: { stateName }
