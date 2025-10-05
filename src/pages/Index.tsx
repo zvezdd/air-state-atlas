@@ -43,17 +43,17 @@ const Index = () => {
   return (
     <>
       <AQIHeader open={profileSheetOpen} />
+      <ProfileSheet
+        open={profileSheetOpen}
+        onOpenChange={setProfileSheetOpen}
+        user={user}
+      />
       <div className={profileSheetOpen ? "opacity-40" : ""}>
         <Header user={user} onMenuClick={() => setProfileSheetOpen(true)} />
         <main className="min-h-screen bg-background">
           <USMap />
         </main>
       </div>
-      <ProfileSheet
-        open={profileSheetOpen}
-        onOpenChange={setProfileSheetOpen}
-        user={user}
-      />
     </>
   );
 };

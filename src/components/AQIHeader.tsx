@@ -82,7 +82,7 @@ export const AQIHeader = ({ open }: { open: boolean }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed top-16 right-0 left-0 bg-background border-b border-border p-4 z-50 shadow-xl">
+    <div className="fixed top-16 right-0 left-0 bg-background border-b border-border p-4 z-[60] shadow-2xl">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-lg font-bold mb-3 text-center">USA Air Quality Overview</h2>
         
