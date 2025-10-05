@@ -1,10 +1,12 @@
 import { User } from "@supabase/supabase-js";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState } from "react";
+import profileIcon from "@/assets/profile-icon.jpg";
 
 interface ProfileSheetProps {
   open: boolean;
@@ -69,6 +71,12 @@ export const ProfileSheet = ({ open, onOpenChange, user }: ProfileSheetProps) =>
           <SheetTitle>Profile</SheetTitle>
         </SheetHeader>
         <div className="mt-8 space-y-6">
+          <div className="flex justify-center mb-6">
+            <Avatar className="w-32 h-32">
+              <AvatarImage src={profileIcon} alt="Profile" />
+              <AvatarFallback>{profile?.name?.[0] || "U"}</AvatarFallback>
+            </Avatar>
+          </div>
           <div>
             <p className="text-sm text-muted-foreground">Name</p>
             <p className="text-lg font-medium">{profile?.name || "Loading..."}</p>
