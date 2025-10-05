@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { StateSplitView } from "./StateSplitView";
 import usMapBackground from "@/assets/usmap.svg";
+import californiaMap from "@/assets/california-map.png";
 
 interface StateData {
   name: string;
@@ -214,63 +215,88 @@ export const USMap = () => {
           {/* Left side - Map with selected state emphasis */}
           <div className="w-1/2 flex items-center justify-center p-8 overflow-hidden">
             <div className="relative w-full h-full flex items-center justify-center">
-              <div 
-                className="relative glass rounded-2xl p-6 shadow-glow-lg overflow-hidden"
-                style={{ 
-                  width: '600px',
-                  height: '600px'
-                }}
-              >
+              {selectedState.code === "CA" ? (
+                /* California-specific custom map */
                 <div 
-                  className="absolute transition-all duration-700 ease-out"
+                  className="relative glass rounded-2xl p-6 shadow-glow-lg flex items-center justify-center"
                   style={{ 
-                    width: '300%',
-                    height: '300%',
-                    left: `${50 - ((states.find(s => s.code === selectedState.code)?.x || 50) * 3)}%`,
-                    top: `${50 - ((states.find(s => s.code === selectedState.code)?.y || 50) * 3)}%`,
+                    width: '600px',
+                    height: '600px'
                   }}
                 >
-                  <div className="relative w-full h-full">
-                    <img 
-                      src={usMapBackground} 
-                      alt="US Map" 
-                      className="absolute inset-0 w-full h-full object-contain opacity-70"
-                    />
-                    
-                    {/* All state buttons with selected state highlighted */}
-                    {states.map((state) => (
-                      <div
-                        key={state.code}
-                        style={{
-                          position: 'absolute',
-                          left: `${state.x}%`,
-                          top: `${state.y}%`,
-                          transform: 'translate(-50%, -50%)'
-                        }}
-                        className={`
-                          rounded-lg px-4 py-3 text-lg font-bold
-                          transition-all duration-500
-                          ${state.code === selectedState.code 
-                            ? 'bg-primary text-primary-foreground scale-[1.5] shadow-glow ring-4 ring-primary/50 z-10' 
-                            : 'glass opacity-10'
-                          }
-                          min-w-[3rem]
-                          flex items-center justify-center
-                        `}
-                      >
-                        {state.code}
-                      </div>
-                    ))}
+                  <img 
+                    src={californiaMap} 
+                    alt="California Map" 
+                    className="max-w-full max-h-full object-contain"
+                  />
+                  
+                  {/* State name label */}
+                  <div className="absolute bottom-4 left-0 right-0 text-center z-20">
+                    <h2 className="text-3xl font-bold bg-gradient-accent bg-clip-text text-transparent">
+                      {selectedState.name}
+                    </h2>
                   </div>
                 </div>
-                
-                {/* State name label */}
-                <div className="absolute bottom-4 left-0 right-0 text-center z-20">
-                  <h2 className="text-3xl font-bold bg-gradient-accent bg-clip-text text-transparent">
-                    {selectedState.name}
-                  </h2>
+              ) : (
+                /* Default zoomed US map for other states */
+                <div 
+                  className="relative glass rounded-2xl p-6 shadow-glow-lg overflow-hidden"
+                  style={{ 
+                    width: '600px',
+                    height: '600px'
+                  }}
+                >
+                  <div 
+                    className="absolute transition-all duration-700 ease-out"
+                    style={{ 
+                      width: '300%',
+                      height: '300%',
+                      left: `${50 - ((states.find(s => s.code === selectedState.code)?.x || 50) * 3)}%`,
+                      top: `${50 - ((states.find(s => s.code === selectedState.code)?.y || 50) * 3)}%`,
+                    }}
+                  >
+                    <div className="relative w-full h-full">
+                      <img 
+                        src={usMapBackground} 
+                        alt="US Map" 
+                        className="absolute inset-0 w-full h-full object-contain opacity-70"
+                      />
+                      
+                      {/* All state buttons with selected state highlighted */}
+                      {states.map((state) => (
+                        <div
+                          key={state.code}
+                          style={{
+                            position: 'absolute',
+                            left: `${state.x}%`,
+                            top: `${state.y}%`,
+                            transform: 'translate(-50%, -50%)'
+                          }}
+                          className={`
+                            rounded-lg px-4 py-3 text-lg font-bold
+                            transition-all duration-500
+                            ${state.code === selectedState.code 
+                              ? 'bg-primary text-primary-foreground scale-[1.5] shadow-glow ring-4 ring-primary/50 z-10' 
+                              : 'glass opacity-10'
+                            }
+                            min-w-[3rem]
+                            flex items-center justify-center
+                          `}
+                        >
+                          {state.code}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* State name label */}
+                  <div className="absolute bottom-4 left-0 right-0 text-center z-20">
+                    <h2 className="text-3xl font-bold bg-gradient-accent bg-clip-text text-transparent">
+                      {selectedState.name}
+                    </h2>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
