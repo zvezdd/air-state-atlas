@@ -94,7 +94,7 @@ export const USMap = () => {
     setIsLoading(true);
     setAirQualityData(null);
 
-    const retryWithBackoff = async (retries = 3, delay = 1000) => {
+    const retryWithBackoff = async (retries = 2, delay = 800) => {
       for (let i = 0; i < retries; i++) {
         try {
           const { data, error } = await supabase.functions.invoke('fetch-air-quality', {
@@ -106,14 +106,14 @@ export const USMap = () => {
           setAirQualityData(data);
           
           if (!data.available) {
-            toast.info(`No data available for ${state.name}`);
+            toast.info(data.message || `No data available for ${state.name}`);
           }
           return;
         } catch (error) {
           if (i === retries - 1) {
             throw error;
           }
-          await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+          await new Promise(resolve => setTimeout(resolve, delay * Math.pow(1.5, i)));
         }
       }
     };

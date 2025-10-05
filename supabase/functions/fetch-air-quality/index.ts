@@ -53,7 +53,7 @@ serve(async (req) => {
     console.log(`Fetching air quality data for state: ${stateCode} with zip: ${getStateZipCode(stateCode)}`);
     
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
     
     let response;
     try {
