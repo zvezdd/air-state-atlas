@@ -228,7 +228,7 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Temperature</p>
-                  <p className="text-2xl font-bold">{data.weather.temperature}°F</p>
+                  <p className="text-2xl font-bold">{data.weather.temperature}°C</p>
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Humidity</p>
