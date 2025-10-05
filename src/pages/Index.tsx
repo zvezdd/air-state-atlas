@@ -1,6 +1,7 @@
 import { USMap } from "@/components/USMap";
 import { Header } from "@/components/Header";
 import { ProfileSheet } from "@/components/ProfileSheet";
+import { AQIHeader } from "@/components/AQIHeader";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { User, Session } from "@supabase/supabase-js";
@@ -41,6 +42,7 @@ const Index = () => {
 
   return (
     <>
+      <AQIHeader open={profileSheetOpen} />
       <div className={profileSheetOpen ? "opacity-40" : ""}>
         <Header user={user} onMenuClick={() => setProfileSheetOpen(true)} />
         <main className="min-h-screen bg-background">
