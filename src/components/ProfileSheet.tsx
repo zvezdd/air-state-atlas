@@ -67,7 +67,7 @@ export const ProfileSheet = ({ open, onOpenChange, user }: ProfileSheetProps) =>
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-[30%] min-w-[300px]">
+      <SheetContent side="right" className="w-[30%] min-w-[300px] top-32">
         <SheetHeader>
           <SheetTitle>Profile</SheetTitle>
         </SheetHeader>
