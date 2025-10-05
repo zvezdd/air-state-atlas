@@ -50,14 +50,35 @@ serve(async (req) => {
     // Fetch current observations for the state
     const airNowUrl = `https://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=${getStateZipCode(stateCode)}&distance=100&API_KEY=${apiKey}`;
     
-    console.log(`Fetching air quality data for state: ${stateCode}`);
+    console.log(`Fetching air quality data for state: ${stateCode} with zip: ${getStateZipCode(stateCode)}`);
     
-    const response = await fetch(airNowUrl);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
+    let response;
+    try {
+      response = await fetch(airNowUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      console.error(`AirNow API fetch error for ${stateCode}:`, fetchError);
+      return new Response(
+        JSON.stringify({ 
+          available: false, 
+          message: 'Unable to retrieve air quality data. The service may be temporarily unavailable.' 
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+      );
+    }
     
     if (!response.ok) {
-      console.error(`AirNow API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error(`AirNow API error: ${response.status} - ${errorText}`);
       return new Response(
-        JSON.stringify({ error: 'Failed to fetch air quality data', available: false }),
+        JSON.stringify({ 
+          available: false, 
+          message: `Air quality data temporarily unavailable (Status: ${response.status})` 
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
     }
