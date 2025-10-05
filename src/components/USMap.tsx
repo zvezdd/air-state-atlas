@@ -19,6 +19,7 @@ interface AirQualityData {
   message?: string;
   airQuality?: {
     pm25: { aqi: number; category: string; categoryNumber: number } | null;
+    pm10: { aqi: number; category: string; categoryNumber: number } | null;
     ozone: { aqi: number; category: string; categoryNumber: number } | null;
     no2: { aqi: number; category: string; categoryNumber: number } | null;
   };

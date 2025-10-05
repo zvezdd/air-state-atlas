@@ -14,6 +14,11 @@ interface AirQualityData {
       category: string;
       categoryNumber: number;
     } | null;
+    pm10: {
+      aqi: number;
+      category: string;
+      categoryNumber: number;
+    } | null;
     ozone: {
       aqi: number;
       category: string;
@@ -101,7 +106,7 @@ export const StatePopup = ({ stateName, stateCode, data, isLoading, onClose }: S
                 <span className="text-2xl">💨</span>
                 Air Quality Index
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {/* PM2.5 */}
                 <div className="glass rounded-xl p-4 hover-scale">
                   <div className="text-sm text-muted-foreground mb-1">PM2.5</div>
@@ -112,6 +117,23 @@ export const StatePopup = ({ stateName, stateCode, data, isLoading, onClose }: S
                       </div>
                       <div className="text-xs text-muted-foreground mt-1">
                         {data.airQuality.pm25.category}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="text-sm text-muted-foreground">No data</div>
+                  )}
+                </div>
+
+                {/* PM10 */}
+                <div className="glass rounded-xl p-4 hover-scale">
+                  <div className="text-sm text-muted-foreground mb-1">PM10</div>
+                  {data.airQuality?.pm10 ? (
+                    <>
+                      <div className={`text-3xl font-bold ${getAQIColor(data.airQuality.pm10.categoryNumber)}`}>
+                        {data.airQuality.pm10.aqi}
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1">
+                        {data.airQuality.pm10.category}
                       </div>
                     </>
                   ) : (

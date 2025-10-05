@@ -15,6 +15,7 @@ interface AirQualityData {
   message?: string;
   airQuality?: {
     pm25: { aqi: number; category: string; categoryNumber: number } | null;
+    pm10: { aqi: number; category: string; categoryNumber: number } | null;
     ozone: { aqi: number; category: string; categoryNumber: number } | null;
     no2: { aqi: number; category: string; categoryNumber: number } | null;
   };
@@ -36,9 +37,10 @@ interface StateSplitViewProps {
 const getAQIValue = (data: AirQualityData | null): number => {
   if (!data?.available || !data.airQuality) return 0;
   const pm25 = data.airQuality.pm25?.aqi || 0;
+  const pm10 = data.airQuality.pm10?.aqi || 0;
   const ozone = data.airQuality.ozone?.aqi || 0;
   const no2 = data.airQuality.no2?.aqi || 0;
-  return Math.max(pm25, ozone, no2);
+  return Math.max(pm25, pm10, ozone, no2);
 };
 
 const getAQIColor = (aqi: number): string => {
@@ -192,12 +194,19 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
                     className="h-4"
                   />
                 </div>
-                <div className="grid grid-cols-3 gap-4 mt-6">
+                <div className="grid grid-cols-2 gap-4 mt-6">
                   {data.airQuality?.pm25 && (
                     <div className="glass rounded-lg p-3">
                       <p className="text-xs text-muted-foreground mb-1">PM2.5</p>
                       <p className="text-xl font-bold">{data.airQuality.pm25.aqi}</p>
                       <p className="text-xs">{data.airQuality.pm25.category}</p>
+                    </div>
+                  )}
+                  {data.airQuality?.pm10 && (
+                    <div className="glass rounded-lg p-3">
+                      <p className="text-xs text-muted-foreground mb-1">PM10</p>
+                      <p className="text-xl font-bold">{data.airQuality.pm10.aqi}</p>
+                      <p className="text-xs">{data.airQuality.pm10.category}</p>
                     </div>
                   )}
                   {data.airQuality?.ozone && (

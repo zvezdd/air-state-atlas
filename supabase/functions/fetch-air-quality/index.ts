@@ -74,6 +74,7 @@ serve(async (req) => {
 
     // Parse the observations
     const pm25 = data.find(obs => obs.ParameterName === 'PM2.5');
+    const pm10 = data.find(obs => obs.ParameterName === 'PM10');
     const ozone = data.find(obs => obs.ParameterName === 'O3' || obs.ParameterName === 'OZONE');
     const no2 = data.find(obs => obs.ParameterName === 'NO2');
 
@@ -110,6 +111,11 @@ serve(async (req) => {
             aqi: pm25.AQI,
             category: pm25.Category.Name,
             categoryNumber: pm25.Category.Number,
+          } : null,
+          pm10: pm10 ? {
+            aqi: pm10.AQI,
+            category: pm10.Category.Name,
+            categoryNumber: pm10.Category.Number,
           } : null,
           ozone: ozone ? {
             aqi: ozone.AQI,
