@@ -65,6 +65,7 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
   const aqiCategory = getAQICategory(aqiValue);
   const [stateImages, setStateImages] = useState<string[]>([]);
   const [loadingPhotos, setLoadingPhotos] = useState(true);
+  const [imageLoadingStates, setImageLoadingStates] = useState<boolean[]>([true, true, true]);
 
   useEffect(() => {
     const fetchPhotos = async () => {
@@ -74,6 +75,7 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
       if (stateName === "California") {
         setStateImages([california1, california2, california3]);
         setLoadingPhotos(false);
+        setImageLoadingStates([true, true, true]);
         return;
       }
 
@@ -86,6 +88,7 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
 
         if (photoData?.photos && photoData.photos.length > 0) {
           setStateImages(photoData.photos);
+          setImageLoadingStates(new Array(photoData.photos.length).fill(true));
         } else {
           // Fallback to placeholder images
           setStateImages([
@@ -93,6 +96,7 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
             `https://picsum.photos/seed/${stateCode}2/800/600`,
             `https://picsum.photos/seed/${stateCode}3/800/600`,
           ]);
+          setImageLoadingStates([true, true, true]);
         }
       } catch (error) {
         console.error('Error fetching state photos:', error);
@@ -102,6 +106,7 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
           `https://picsum.photos/seed/${stateCode}2/800/600`,
           `https://picsum.photos/seed/${stateCode}3/800/600`,
         ]);
+        setImageLoadingStates([true, true, true]);
       } finally {
         setLoadingPhotos(false);
       }
@@ -109,6 +114,14 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
 
     fetchPhotos();
   }, [stateName, stateCode]);
+
+  const handleImageLoad = (index: number) => {
+    setImageLoadingStates(prev => {
+      const newStates = [...prev];
+      newStates[index] = false;
+      return newStates;
+    });
+  };
 
   return (
     <div className="w-1/2 p-8 overflow-y-auto bg-background relative">
@@ -140,12 +153,18 @@ export const StateSplitView = ({ stateName, stateCode, data, isLoading, onClose 
               ))
             ) : (
               stateImages.map((img, idx) => (
-                <div key={idx} className="glass rounded-xl overflow-hidden hover-scale">
+                <div key={idx} className="glass rounded-xl overflow-hidden hover-scale relative">
+                  {imageLoadingStates[idx] && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-muted animate-pulse">
+                      <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
                   <img
                     src={img}
                     alt={`${stateName} view ${idx + 1}`}
                     className="w-full h-64 object-cover"
                     loading="lazy"
+                    onLoad={() => handleImageLoad(idx)}
                   />
                 </div>
               ))
