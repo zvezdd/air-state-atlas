@@ -94,21 +94,35 @@ export const USMap = () => {
     setIsLoading(true);
     setAirQualityData(null);
 
-    try {
-      const { data, error } = await supabase.functions.invoke('fetch-air-quality', {
-        body: { stateCode: state.code }
-      });
+    const retryWithBackoff = async (retries = 3, delay = 1000) => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const { data, error } = await supabase.functions.invoke('fetch-air-quality', {
+            body: { stateCode: state.code }
+          });
 
-      if (error) throw error;
+          if (error) throw error;
 
-      setAirQualityData(data);
-      
-      if (!data.available) {
-        toast.info(`No data available for ${state.name}`);
+          setAirQualityData(data);
+          
+          if (!data.available) {
+            toast.info(`No data available for ${state.name}`);
+          }
+          return;
+        } catch (error) {
+          if (i === retries - 1) {
+            throw error;
+          }
+          await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)));
+        }
       }
+    };
+
+    try {
+      await retryWithBackoff();
     } catch (error) {
       console.error('Error fetching air quality data:', error);
-      toast.error('Failed to fetch air quality data');
+      toast.error('Failed to fetch air quality data. Please try again.');
       setAirQualityData({ available: false, message: 'Failed to fetch data' });
     } finally {
       setIsLoading(false);
