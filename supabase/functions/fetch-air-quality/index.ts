@@ -53,7 +53,7 @@ serve(async (req) => {
     console.log(`Fetching air quality data for state: ${stateCode} with zip: ${getStateZipCode(stateCode)}`);
     
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 second timeout
     
     let response;
     try {
@@ -61,11 +61,14 @@ serve(async (req) => {
       clearTimeout(timeoutId);
     } catch (fetchError) {
       clearTimeout(timeoutId);
+      const isTimeout = fetchError instanceof Error && fetchError.name === 'AbortError';
       console.error(`AirNow API fetch error for ${stateCode}:`, fetchError);
       return new Response(
         JSON.stringify({ 
           available: false, 
-          message: 'Unable to retrieve air quality data. The service may be temporarily unavailable.' 
+          message: isTimeout 
+            ? 'Request timed out. The air quality service is responding slowly. Please try again.' 
+            : 'Unable to retrieve air quality data. The service may be temporarily unavailable.' 
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
