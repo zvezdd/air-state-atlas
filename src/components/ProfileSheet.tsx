@@ -2,6 +2,7 @@ import { User } from "@supabase/supabase-js";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -72,10 +73,14 @@ export const ProfileSheet = ({ open, onOpenChange, user }: ProfileSheetProps) =>
         </SheetHeader>
         <div className="mt-8 space-y-6">
           <div className="flex justify-center mb-6">
-            <Avatar className="w-32 h-32">
-              <AvatarImage src={profileIcon} alt="Profile" />
-              <AvatarFallback>{profile?.name?.[0] || "U"}</AvatarFallback>
-            </Avatar>
+            {!profile ? (
+              <Skeleton className="w-32 h-32 rounded-full" />
+            ) : (
+              <Avatar className="w-32 h-32">
+                <AvatarImage src={profileIcon} alt="Profile" />
+                <AvatarFallback>{profile?.name?.[0] || "U"}</AvatarFallback>
+              </Avatar>
+            )}
           </div>
           <div>
             <p className="text-sm text-muted-foreground">Name</p>
